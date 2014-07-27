@@ -1,0 +1,15 @@
+{
+  "name": "twitterRss",
+  "version": "0.0.1",
+  "description": "Rss generator for components of twitter streams.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "confidence": "^0.12.1",
+    "request": "^2.39.0"
+  }
+}
