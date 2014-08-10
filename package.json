@@ -9,7 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "^2.2.2",
     "confidence": "^0.12.1",
-    "request": "^2.39.0"
+    "hapi": "^6.4.0",
+    "joi": "^4.6.2",
+    "twitter-app-api": "0.0.1"
   }
 }
