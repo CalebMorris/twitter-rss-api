@@ -13,6 +13,8 @@
     "confidence": "^0.12.1",
     "hapi": "^6.4.0",
     "joi": "^4.6.2",
-    "twitter-app-api": "0.0.1"
+    "lodash": "^2.4.1",
+    "rss": "^0.3.2",
+    "twitter-app-api": "0.0.2"
   }
 }

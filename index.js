@@ -1,11 +1,36 @@
 'use strict';
 
+var _       = require('lodash');
 var config  = require('./config').get('/twitter');
 var hapi    = require('hapi');
 var Joi     = require('joi');
+var Rss     = require('rss');
 var Twitter = require('twitter-app-api');
 
-new Twitter(config.apiKey, config.apiSecret, function(twit) {
+var generateRssFeed = function(screenName, path, query, tweets) {
+  var feed = new Rss({
+    title: 'Tweets of ' + screenName,
+    description: 'Rss of tweets for the user \'' + screenName + '\''
+  });
+
+  _.map(tweets, function(tweet) {
+    feed.item({
+      title: tweet.text,
+      description: tweet.text,
+      url: tweet.expanded_url,
+      date: tweet.created_at,
+      author: screenName
+    });
+  });
+
+  return feed.xml();
+};
+
+new Twitter(config.apiKey, config.apiSecret, function(err, twit) {
+  if (err) {
+    console.error(err.message);
+    console.error(err.body);
+  }
 
   var server = new hapi.Server(4000, 'localhost');
 
@@ -21,7 +46,7 @@ new Twitter(config.apiKey, config.apiSecret, function(twit) {
         }
 
         twit.getTweets(options, function(tweets) {
-          reply({ length : tweets.length , tweets : tweets });
+          reply(generateRssFeed(request.params.screenName, null, null, tweets));
         });
         // console.log(request.params);
         // console.log(request.query);
