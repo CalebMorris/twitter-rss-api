@@ -32,7 +32,7 @@ new Twitter(config.apiKey, config.apiSecret, function(err, twit) {
     console.error(err.body);
   }
 
-  var server = new hapi.Server(4000, 'localhost');
+  var server = new hapi.Server(process.env.PORT || 4000, 'localhost');
 
   server.route({
     path: "/user/{screenName}",
