@@ -26,11 +26,15 @@ var generateRssFeed = function(screenName, path, query, tweets) {
   return feed.xml();
 };
 
+console.log('Starting twitter module');
+
 new Twitter(config.apiKey, config.apiSecret, function(err, twit) {
   if (err) {
     console.error(err.message);
     console.error(err.body);
   }
+
+  console.log('Twitter started', err, twit);
 
   var server = new hapi.Server(process.env.PORT || 4000, 'localhost');
 
