@@ -38,7 +38,7 @@ new Twitter(config.apiKey, config.apiSecret, function(err, twit) {
 
   console.log('Twitter started', err, twit);
 
-  var server = new hapi.Server(process.env.PORT || 4000, 'localhost');
+  var server = new hapi.Server(process.env.PORT || 4000, '0.0.0.0');
 
   server.route({
     path: "/user/{screenName}",
