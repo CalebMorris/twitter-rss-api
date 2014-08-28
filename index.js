@@ -4,6 +4,7 @@ var _       = require('lodash');
 var config  = require('./config').get('/twitter');
 var hapi    = require('hapi');
 var Joi     = require('joi');
+var Promise = require('bluebird');
 var Rss     = require('rss');
 var Twitter = require('twitter-app-api');
 
@@ -30,14 +31,19 @@ var generateRssFeed = function(screenName, path, query, tweets) {
 
 console.log('Starting twitter module');
 
-new Twitter(config.apiKey, config.apiSecret, function(err, twit) {
-  if (err) {
-    console.error(err.message);
-    console.error(err.body);
-  }
+return new Promise(function(res, rej) {
+  new Twitter(config.apiKey, config.apiSecret, function(err, twit) {
+    if (err) {
+      console.error(err.message);
+      console.error(err.body);
+      rej(err);
+    }
 
-  console.log('Twitter started', err, twit);
-
+    res(twit);
+  });
+})
+.then(function(twit) {
+  console.log('Twitter started', twit);
   var server = new hapi.Server(process.env.PORT || 4000, '0.0.0.0');
 
   server.route({
@@ -83,5 +89,4 @@ new Twitter(config.apiKey, config.apiSecret, function(err, twit) {
   server.start(function() {
     console.log('Hapi server started @', server.info.uri);
   });
-
 });
