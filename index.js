@@ -8,6 +8,7 @@ var Rss     = require('rss');
 var Twitter = require('twitter-app-api');
 
 var generateRssFeed = function(screenName, path, query, tweets) {
+  console.log('generateRssFeed');
   var feed = new Rss({
     title: 'Tweets of ' + screenName,
     description: 'Rss of tweets for the user \'' + screenName + '\''
@@ -23,6 +24,7 @@ var generateRssFeed = function(screenName, path, query, tweets) {
     });
   });
 
+  console.log('RETURN');
   return feed.xml();
 };
 
@@ -43,13 +45,16 @@ new Twitter(config.apiKey, config.apiSecret, function(err, twit) {
     method: "GET",
     config: {
       handler: function(request, reply) {
+        console.log('user', request.params.screenName);
         var options = { screen_name : request.params.screenName };
 
         for (var key in request.query) {
           options[key] = request.query[key];
         }
 
+        console.log('getTweets');
         twit.getTweets(options, function(tweets) {
+          console.log('gotTweets');
           reply(generateRssFeed(request.params.screenName, null, null, tweets));
         });
         // console.log(request.params);
@@ -72,6 +77,8 @@ new Twitter(config.apiKey, config.apiSecret, function(err, twit) {
       }
     }
   });
+
+  console.log('setup routes');
 
   server.start(function() {
     console.log('Hapi server started @', server.info.uri);
