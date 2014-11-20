@@ -31,17 +31,9 @@ function generateRssFeed(screenName, path, query, tweets) {
 
 console.log('Starting twitter module');
 
-return new Promise(function(res, rej) {
-  new Twitter(config.apiKey, config.apiSecret, function(err, twit) {
-    if (err) {
-      console.error(err.message);
-      console.error(err.body);
-      rej(err);
-    }
+var twit = new Twitter(config.apiKey, config.apiSecret);
 
-    res(twit);
-  });
-})
+twit.authenticate()
 .then(function(twit) {
   console.log('Twitter started', twit);
   var server = new hapi.Server(process.env.PORT || 4000, '0.0.0.0');
@@ -59,7 +51,8 @@ return new Promise(function(res, rej) {
         }
 
         console.log('getTweets');
-        twit.getTweets(options, function(tweets) {
+        twit.getTweets(options)
+        .then(function(tweets) {
           console.log('gotTweets');
           reply(generateRssFeed(request.params.screenName, null, null, tweets));
         });
@@ -89,4 +82,8 @@ return new Promise(function(res, rej) {
   server.start(function() {
     console.log('Hapi server started @', server.info.uri);
   });
+})
+.catch(function(err) {
+    console.error(err.message);
+    console.error(err.body);
 });
