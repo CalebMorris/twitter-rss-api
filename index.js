@@ -8,7 +8,7 @@ var Promise = require('bluebird');
 var Rss     = require('rss');
 var Twitter = require('twitter-app-api');
 
-var generateRssFeed = function(screenName, path, query, tweets) {
+function generateRssFeed(screenName, path, query, tweets) {
   console.log('generateRssFeed');
   var feed = new Rss({
     title: 'Tweets of ' + screenName,
