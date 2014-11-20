@@ -1,6 +1,6 @@
 {
   "name": "twitterRss",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Rss generator for components of twitter streams.",
   "main": "index.js",
   "scripts": {
