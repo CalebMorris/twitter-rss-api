@@ -8,6 +8,7 @@ var config = {
     apiSecret : process.env.TWITTER_API_SECRET || ''
   }
 };
+
 store.load(config);
 
 module.exports = store;
