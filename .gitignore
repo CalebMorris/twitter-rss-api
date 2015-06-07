@@ -2,3 +2,5 @@
 Vagrantfile
 
 node_modules/*
+
+.env
