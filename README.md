@@ -14,9 +14,10 @@ A Hapi.js based shim for converting Twitter Application API calls to RSS feeds.
 
 ## Development
 
+1. Install dependencies (`npm i` or `yarn install`)
 1. Create a `.env` file containing env keys
   ``` yaml
   TWITTER_API_SECRET=secret
   TWITTER_API_KEY=key
   ```
-2. `npm run dev`
+1. `npm run dev`

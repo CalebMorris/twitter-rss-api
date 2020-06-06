@@ -7,7 +7,7 @@
     "node": ">=12.0.0"
   },
   "scripts": {
-    "dev": "npm install && ./node_modules/.bin/nodemon -e js -i node_modules -x 'nf start web'",
+    "dev": "./node_modules/.bin/nodemon -e js -i node_modules -x 'nf start web'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
