@@ -15,7 +15,7 @@
   "dependencies": {
     "@hapi/hapi": "^19.1.1",
     "@hapi/joi": "^17.1.1",
-    "confidence": "^0.12.1",
+    "confidence": "^4.0.2",
     "lodash": "^4.17.15",
     "rss": "^0.3.2",
     "twitter-app-api": "^0.1.1"
