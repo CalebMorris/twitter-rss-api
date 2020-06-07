@@ -3,23 +3,25 @@
   "version": "0.0.5",
   "description": "Rss generator for components of twitter streams.",
   "main": "index.js",
+  "engines": {
+    "node": ">=12.0.0"
+  },
   "scripts": {
-    "dev": "npm install && ./node_modules/.bin/nodemon -e js -i node_modules -x 'nf start web'",
+    "dev": "./node_modules/.bin/nodemon -e js -i node_modules -x 'nf start web'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bluebird": "^2.2.2",
-    "confidence": "^0.12.1",
-    "hapi": "^6.4.0",
-    "joi": "^4.6.2",
-    "lodash": "^2.4.1",
-    "rss": "^0.3.2",
-    "twitter-app-api": "0.0.3"
+    "@hapi/hapi": "^19.1.1",
+    "@hapi/joi": "^17.1.1",
+    "confidence": "^4.0.2",
+    "lodash": "^4.17.15",
+    "rss": "^1.2.2",
+    "twitter-app-api": "^0.2.0"
   },
   "devDependencies": {
-    "foreman": "^1.4.0",
-    "nodemon": "^1.3.7"
+    "foreman": "^3.0.1",
+    "nodemon": "^2.0.4"
   }
 }
