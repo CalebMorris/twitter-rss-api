@@ -1,0 +1,61 @@
+<div class="tweet-wrapper">
+
+  <style type="text/css">
+    .tweet-wrapper {
+      width: 598px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .tweet-header {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .tweet-user-ref {
+      display: flex;
+      flex-direction: column;
+      margin-top: auto;
+      margin-bottom: auto;
+    }
+
+    .tweet-body {
+      flex-grow: 10;
+    }
+  </style>
+
+  <div class="tweet-header">
+
+    <div class="tweet-user-icon">
+      <a href="https://twitter.com/{{UserName}}">
+        <img src="{{UserIcon}}"></img>
+      </a>
+    </div>
+
+    <div class="tweet-user-ref">
+      <div class="tweet-user-pseudonym">
+        <a href="https://twitter.com/{{UserName}}">{{DisplayName}}</a>
+      </div>
+
+      <div class="tweet-user-name">@{{UserName}}</div>
+    </div>
+
+  </div>
+
+  {{#ReplyingUserName}}
+  <div class="tweet-reply-context">
+    Replying to <a href="https://twitter.com/{{ReplyingUserName}}">@{{ReplyingUserName}}</a>
+  </div>
+  {{/ReplyingUserName}}
+
+  <div class="tweet-body">
+    <div class="tweet-text" style="font-size:1.5em;">{{FullText}}</div>
+    {{> tweet-media}}
+  </div>
+
+  <div class="tweet-footer">
+    <a href="https://twitter.com/{{UserName}}/status/{{StatusId}}">{{StatusTimestamp}}</a> · <a href="https://twitter2rssapi.herokuapp.com/">Twitter2RSS</a>
+  </div>`
+
+</div>
