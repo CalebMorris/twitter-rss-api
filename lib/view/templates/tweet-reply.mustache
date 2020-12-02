@@ -1,0 +1,91 @@
+<div class="reply-tweet-wrapp">
+
+  <style type="text/css">
+    .reply-tweet-spacing-line {
+      flex-grow: 10;
+      width: 2px;
+      height: calc(100% - 48px);
+      background-color: rgb(61, 84, 102);
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .reply-tweet-wrapp {
+      display: flex;
+      flex-wrap: nowrap;
+      flex-direction: row;
+    }
+
+    .reply-tweet-user-icon {
+      flex-grow: 1;
+      width: 48px;
+      height: 48px;
+    }
+
+    .reply-tweet-content {
+      flex-grow: 5;
+      flex-direction: column;
+      flex-direction: column-reverse;
+    }
+
+    .reply-tweet-prefix: {
+      display: flex;
+      flex-direction: column-reverse;
+    }
+
+    .reply-tweet-header {
+      display: inline-flex;
+      flex-flow: row;
+      flex-wrap: nowrap;
+    }
+
+    .reply-tweet-user {
+      display: inline-flex;
+      flex-grow: 4;
+    }
+
+    .reply-tweet-user-pseudonym {
+      margin-right: 4px;
+    }
+
+    .reply-tweet-time {
+      flex-grow: 2;
+    }
+
+    .reply-tweet-body {
+      flex-grow: 5;
+    }
+  </style>
+
+  <div class="reply-tweet-prefix">
+    <div class="reply-tweet-user-icon">
+      <a href="https://twitter.com/{{UserName}}">
+        <img src="{{UserIcon}}"></img>
+      </a>
+    </div>
+
+    <div class="reply-tweet-spacing-line"></div>
+  </div>
+
+  <div class="reply-tweet-content">
+
+    <div class="reply-tweet-header">
+      <div class="reply-tweet-user">
+        <div class="reply-tweet-user-pseudonym">
+          <a href="https://twitter.com/{{UserName}}">{{DisplayName}}</a>
+        </div>
+
+        <div class="reply-tweet-user-name">@{{UserName}}</div>
+      </div>
+      <div class="meta-separater">·</div>
+      <div class="reply-tweet-time">
+        <a href="https://twitter.com/{{UserName}}/status/{{StatusId}}">{{StatusTimestamp}}</a>
+      </div>
+    </div>
+
+    <div class="reply-tweet-body">
+      <div class="tweet-text" style="font-size:1.5em;">{{FullText}}</div>
+      {{> tweet-media}}
+    </div>
+  </div>
+</div>
