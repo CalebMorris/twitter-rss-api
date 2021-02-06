@@ -25,6 +25,12 @@
     }
   </style>
 
+  {{#IsRetweet}}
+  <div class="tweet-retweeter">
+    {{>retweet-icon}}
+  </div>
+  {{/IsRetweet}}
+
   <div class="tweet-header">
 
     <div class="tweet-user-icon">
