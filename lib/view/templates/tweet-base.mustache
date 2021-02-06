@@ -25,6 +25,10 @@
     }
   </style>
 
+  {{#RetweetUser}}
+  {{> retweeted-by}}
+  {{/RetweetUser}}
+
   <div class="tweet-header">
 
     <div class="tweet-user-icon">
@@ -50,7 +54,7 @@
   {{/ReplyingUserName}}
 
   <div class="tweet-body">
-    <div class="tweet-text" style="font-size:1.5em;">{{#IsRetweet}}RT {{/IsRetweet}}{{FullText}}</div>
+    <div class="tweet-text" style="font-size:1.5em;">{{FullText}}</div>
     {{> tweet-media}}
   </div>
 
