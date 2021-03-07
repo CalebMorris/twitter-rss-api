@@ -17,10 +17,11 @@
     "@hapi/hapi": "^19.1.1",
     "@hapi/joi": "^17.1.1",
     "confidence": "^4.0.2",
+    "install": "^0.13.0",
     "lodash": "^4.17.15",
     "mustache": "^4.0.1",
     "rss": "^1.2.2",
-    "twitter-app-api": "^0.3.2"
+    "twitter-app-api": "git://github.com/CalebMorris/twitter-application-only-api.git#v0.4.1"
   },
   "devDependencies": {
     "foreman": "^3.0.1",
