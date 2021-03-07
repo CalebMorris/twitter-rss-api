@@ -10,7 +10,9 @@
     "start": "./node_modules/.bin/nf start web",
     "dev": "./node_modules/.bin/nodemon -e js -i node_modules -x 'npm run start'",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
+    "copy-templates": "cp -R ./lib/view/templates ./dist/view/",
+    "build": "tsc && npm run copy-templates",
+    "build-release": "npm run clean && npm run build && npm run lint-quiet",
     "clean": "rm -Rf ./dist",
     "lint": "eslint . --ext .ts",
     "lint-quiet": "eslint . --ext .ts --quiet"
