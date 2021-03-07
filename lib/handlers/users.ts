@@ -11,24 +11,8 @@ import { ExtendedTweet } from '../view/TweetTransformer';
 
 const STATUS_TMPL = 'https://twitter.com/%s/status/%s';
 
-function findall(str: string, regex: RegExp) {
-  var found;
-  var matches = [];
-
-  while(true) {
-    found = regex.exec(str);
-    if (! found) {
-      break;
-    }
-
-    matches.push(found[0]);
-  }
-
-  return matches;
-}
-
-function generateRssFeed(screenName: string, tweets: Array<Tweet>) {
-  var feed = new Rss({
+function generateRssFeed(screenName: string, tweets: Array<Tweet>): string {
+  const feed = new Rss({
     title : `Tweets of ${screenName}`,
     description : `Rss of tweets for the user '${screenName}'`,
     generator : 'node-rss and twitter-rss-api',
@@ -66,11 +50,11 @@ async function handler(twit: Twitter, request: Hapi.Request, h: Hapi.ResponseToo
     console.log(`Requested URL [${request.raw.req.url}]`);
 
     const tweetHandler = new TweetHandler(twit);
-    var options: any = { screen_name : request.params.screenName };
+    const options: any = { screen_name : request.params.screenName };
 
     delete request.query.format;
 
-    for (var key in request.query) {
+    for (const key in request.query) {
       options[key] = request.query[key];
     }
 
@@ -116,8 +100,6 @@ async function handler(twit: Twitter, request: Hapi.Request, h: Hapi.ResponseToo
 
 export default {
   handler : handler,
-
-  findall : findall,
 
   generateRssFeed : generateRssFeed,
 

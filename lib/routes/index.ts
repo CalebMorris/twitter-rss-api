@@ -3,7 +3,7 @@ import { Twitter } from "twitter-app-api";
 import { route as usersRoutes} from './users';
 import { route as homeRoutes } from './home';
 
-module.exports = function(twit: Twitter, server: Hapi.Server) {
+export function routes(twit: Twitter, server: Hapi.Server): void {
   usersRoutes(twit, server);
   homeRoutes(server);
-};
+}

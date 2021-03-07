@@ -41,6 +41,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var hapi_1 = __importDefault(require("@hapi/hapi"));
 var twitter_app_api_1 = require("twitter-app-api");
+var routes_1 = require("./routes");
 function init() {
     return __awaiter(this, void 0, void 0, function () {
         var twit, err_1, server;
@@ -75,7 +76,7 @@ function init() {
                         port: process.env.PORT || 4000,
                         host: '0.0.0.0'
                     });
-                    require('./routes')(twit, server);
+                    routes_1.routes(twit, server);
                     return [4 /*yield*/, server.start()];
                 case 5:
                     _a.sent();

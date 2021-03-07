@@ -1,8 +1,8 @@
 import Hapi from '@hapi/hapi';
 
-export function route(server: Hapi.Server) {
+export function route(server: Hapi.Server): void {
 
-  var html = '<html><body><h3>Twitter RSS Shim</h3><p> Test it out: <a href="/user/google?format=rss">here</a></p></body><html>';
+  const html = '<html><body><h3>Twitter RSS Shim</h3><p> Test it out: <a href="/user/google?format=rss">here</a></p></body><html>';
 
   return server.route({
     path : '/',

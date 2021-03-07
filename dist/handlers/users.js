@@ -57,18 +57,6 @@ var util_1 = __importDefault(require("util"));
 var TweetFormatter_1 = __importDefault(require("../view/TweetFormatter"));
 var tweet_handler_1 = __importDefault(require("../handlers/tweet-handler"));
 var STATUS_TMPL = 'https://twitter.com/%s/status/%s';
-function findall(str, regex) {
-    var found;
-    var matches = [];
-    while (true) {
-        found = regex.exec(str);
-        if (!found) {
-            break;
-        }
-        matches.push(found[0]);
-    }
-    return matches;
-}
 function generateRssFeed(screenName, tweets) {
     var feed = new rss_1.default({
         title: "Tweets of " + screenName,
@@ -156,7 +144,6 @@ function handler(twit, request, h) {
 }
 exports.default = {
     handler: handler,
-    findall: findall,
     generateRssFeed: generateRssFeed,
     validate: joi_1.default.object({
         params: joi_1.default.object({

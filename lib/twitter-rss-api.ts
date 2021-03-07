@@ -2,6 +2,7 @@
 
 import Hapi from '@hapi/hapi';
 import { Twitter } from 'twitter-app-api';
+import { routes } from './routes';
 
 async function init() {
 
@@ -31,7 +32,7 @@ async function init() {
       host: '0.0.0.0'
   });
 
-  require('./routes')(twit, server);
+  routes(twit, server);
 
   await server.start();
   console.log('Server running on %s', server.info.uri);
