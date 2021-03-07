@@ -1,14 +1,17 @@
-'use strict';
+import _ from 'lodash';
+import Joi from '@hapi/joi';
+import Hapi from '@hapi/hapi';
+import Rss from 'rss';
+import util from 'util';
+import TweetFormatter from '../view/TweetFormatter';
+import TweetHandler from '../handlers/tweet-handler';
+import { Twitter } from "twitter-app-api";
+import { FullUser, Status as Tweet } from 'twitter-d';
+import { ExtendedTweet } from '../view/TweetTransformer';
 
-var _ = require('lodash');
-var Joi = require('@hapi/joi');
-var Rss = require('rss');
-var util = require('util');
-var STATUS_TMPL = 'https://twitter.com/%s/status/%s';
-const TweetFormatter = require('../view/TweetFormatter');
-const TweetHandler = require('../handlers/tweet-handler');
+const STATUS_TMPL = 'https://twitter.com/%s/status/%s';
 
-function findall(str, regex) {
+function findall(str: string, regex: RegExp) {
   var found;
   var matches = [];
 
@@ -24,19 +27,20 @@ function findall(str, regex) {
   return matches;
 }
 
-function generateRssFeed(screenName, path, query, tweets, format) {
+function generateRssFeed(screenName: string, tweets: Array<Tweet>) {
   var feed = new Rss({
-    title : 'Tweets of ' + screenName,
-    description : 'Rss of tweets for the user \'' + screenName + '\'',
+    title : `Tweets of ${screenName}`,
+    description : `Rss of tweets for the user '${screenName}'`,
     generator : 'node-rss and twitter-rss-api',
-    site_url: 'https://twitter.com/' + screenName,
+    site_url: `https://twitter.com/${screenName}`,
+    feed_url: '', // TODO: fill this in
   });
 
   _.map(tweets, function(tweet) {
-    const itemOptions = {
+    const itemOptions: any = {
       title : tweet.full_text,
       description : TweetFormatter.render(tweet),
-      url : util.format(STATUS_TMPL, tweet.user.screen_name, tweet.id_str),
+      url : util.format(STATUS_TMPL, (tweet.user as FullUser).screen_name, tweet.id_str),
       date : tweet.created_at,
       author : screenName
     };
@@ -57,14 +61,13 @@ function generateRssFeed(screenName, path, query, tweets, format) {
   return feed.xml();
 }
 
-async function handler(twit, request, h) {
+async function handler(twit: Twitter, request: Hapi.Request, h: Hapi.ResponseToolkit) {
   try {
     console.log(`Requested URL [${request.raw.req.url}]`);
 
     const tweetHandler = new TweetHandler(twit);
-    var options = { screen_name : request.params.screenName };
+    var options: any = { screen_name : request.params.screenName };
 
-    const formatOption = request.query.format;
     delete request.query.format;
 
     for (var key in request.query) {
@@ -76,31 +79,31 @@ async function handler(twit, request, h) {
       ...options,
     });
 
-    const innerTweetIds = _.reduce(timelineTweets, (curry, timelineTweet) => {
-      curry.push(timelineTweet.in_reply_to_status_id_str);
+    const innerTweetIds = _.reduce(timelineTweets, (curry: string[], timelineTweet: Tweet) => {
+      if (timelineTweet.in_reply_to_status_id_str) curry.push(timelineTweet.in_reply_to_status_id_str);
       return curry;
     }, []);
 
     const innerTweets = await tweetHandler.getTweets(innerTweetIds);
-    const innerTweetsMap = _.reduce(innerTweets, (curry, innerTweet) => {
+    const innerTweetsMap = _.reduce(innerTweets, (curry: {[key: string]: Tweet}, innerTweet: Tweet) => {
       curry[innerTweet.id_str] = innerTweet;
       return curry;
     }, {});
 
     timelineTweets = _.map(timelineTweets, (timelineTweet) => {
-      let tweet = timelineTweet;
+      let tweet: ExtendedTweet = timelineTweet as ExtendedTweet;
       if (tweet.retweeted_status) {
-        tweet = tweet.retweeted_status;
+        tweet = tweet.retweeted_status as ExtendedTweet;
         tweet.retweetUser = timelineTweet.user;
       }
       if (tweet.in_reply_to_status_id_str) {
-        tweet.in_reply_to_tweet = innerTweetsMap[tweet.in_reply_to_status_id_str];
+        tweet.in_reply_to_tweet = innerTweetsMap[tweet.in_reply_to_status_id_str] as ExtendedTweet;
       }
       return tweet;
     });
 
     return h.response(
-      generateRssFeed(request.params.screenName, null, null, timelineTweets, formatOption)
+      generateRssFeed(request.params.screenName, timelineTweets)
     )
     .type('text/xml');
   } catch(err) {
@@ -111,14 +114,14 @@ async function handler(twit, request, h) {
   }
 }
 
-module.exports = {
+export default {
   handler : handler,
 
   findall : findall,
 
   generateRssFeed : generateRssFeed,
 
-  validate : {
+  validate : Joi.object({
     params : Joi.object({
       screenName : Joi.string().min(1).required()
     }),
@@ -133,5 +136,5 @@ module.exports = {
       include_rts         : Joi.boolean(),
       format : Joi.string().optional().min(1),
     }),
-  },
+  }),
 };

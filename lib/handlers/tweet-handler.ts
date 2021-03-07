@@ -1,14 +1,19 @@
 
-const _ = require('lodash');
+import _ from 'lodash';
+import { Twitter } from 'twitter-app-api';
+import { TimelineOptions, TimelineResults } from 'twitter-app-api/dist/actions/statuses/timeline';
+import { Status as Tweet } from 'twitter-d';
 
-class TweetHandler {
-  static tweetRefCache = {};
+export default class TweetHandler {
+  static tweetRefCache: { [key: string]: Tweet } = {};
 
-  constructor(twit) {
+  twit: Twitter;
+
+  constructor(twit: Twitter) {
     this.twit = twit;
   }
 
-  async getTweets(tweetIds, options) {
+  async getTweets(tweetIds: string[], options: any = {}): Promise<Array<Tweet>> {
     const [cachedIds, uncachedIds] = _.partition(tweetIds, (tweetId) => {
       return tweetId in TweetHandler.tweetRefCache;
     });
@@ -30,14 +35,12 @@ class TweetHandler {
     ];
   }
 
-  async getTimeline(options) {
+  async getTimeline(options: TimelineOptions): Promise<TimelineResults> {
     const tweets = await this.twit.statuses.timeline(options);
     _.forEach(tweets, (tweet) => {
-      this.tweetRefCache[tweet.id_str] = tweet;
+      TweetHandler.tweetRefCache[tweet.id_str] = tweet;
     });
     return tweets;
   }
 
 }
-
-module.exports = TweetHandler;

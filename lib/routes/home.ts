@@ -1,8 +1,6 @@
-'use strict';
+import Hapi from '@hapi/hapi';
 
-var users = require('../handlers/users');
-
-function route(server) {
+export function route(server: Hapi.Server) {
 
   var html = '<html><body><h3>Twitter RSS Shim</h3><p> Test it out: <a href="/user/google?format=rss">here</a></p></body><html>';
 
@@ -15,5 +13,3 @@ function route(server) {
   });
 
 }
-
-module.exports = route;

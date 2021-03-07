@@ -1,7 +1,7 @@
 'use strict';
 
-var Hapi    = require('@hapi/hapi');
-var Twitter = require('twitter-app-api').Twitter;
+import Hapi from '@hapi/hapi';
+import { Twitter } from 'twitter-app-api';
 
 async function init() {
 

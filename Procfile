@@ -1,1 +1,1 @@
-web: node ./lib/twitter-rss-api.js
+web: node ./dist/twitter-rss-api.js

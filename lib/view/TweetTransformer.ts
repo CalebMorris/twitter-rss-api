@@ -1,11 +1,18 @@
-const _ = require('lodash');
+import _ from 'lodash';
+import { FullUser, Status as Tweet, User } from 'twitter-d';
 
-class TweetTransformer {
-  static parse(tweet) {
-    const parsedTweet = {
-      UserName: tweet.user.screen_name,
-      UserIcon: tweet.user.profile_image_url_https,
-      DisplayName: tweet.user.name,
+export interface ExtendedTweet extends Tweet {
+  retweetUser: User,
+  in_reply_to_tweet: ExtendedTweet,
+}
+
+export default class TweetTransformer {
+  static parse(tweet: ExtendedTweet) {
+    const fullUser: FullUser = tweet.user as FullUser;
+    const parsedTweet: any = {
+      UserName: fullUser.screen_name,
+      UserIcon: fullUser.profile_image_url_https,
+      DisplayName: fullUser.name,
       ReplyingUserName: tweet.in_reply_to_screen_name,
       FullText: tweet.full_text,
       StatusId: tweet.id_str,
@@ -45,5 +52,3 @@ class TweetTransformer {
     return parsedTweet;
   }
 }
-
-module.exports = TweetTransformer;

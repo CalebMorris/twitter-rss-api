@@ -1,8 +1,9 @@
-const _ = require('lodash');
-const fs = require('fs');
-const path = require('path');
-const Mustache = require('mustache');
-const TweetTransformer = require('./TweetTransformer');
+import _ from 'lodash';
+import fs from 'fs';
+import path from 'path';
+import Mustache from 'mustache';
+import TweetTransformer from './TweetTransformer';
+import { Status as Tweet } from 'twitter-d';
 
 const tweetSatus = fs.readFileSync(path.join(__dirname, './templates/status.mustache'), 'utf8');
 
@@ -13,10 +14,10 @@ const partials = {
   'retweeted-by': fs.readFileSync(path.join(__dirname, './templates/retweeted-by.mustache'), 'utf8'),
 };
 
-class TweetFormatter {
+export default class TweetFormatter {
   static statusTemplate = tweetSatus;
 
-  static render(rawStatusPayload) {
+  static render(rawStatusPayload: any) {
     this.validate(rawStatusPayload);
     return Mustache.render(TweetFormatter.statusTemplate, TweetTransformer.parse(rawStatusPayload), partials);
   }
@@ -24,7 +25,7 @@ class TweetFormatter {
   /**
    * Confirms required content
    */
-  static validate(tweet) {
+  static validate(tweet: Tweet) {
     validatePath(tweet, 'user.screen_name');
     validatePath(tweet, 'user.profile_image_url_https');
     validatePath(tweet, 'user.name');
@@ -36,10 +37,8 @@ class TweetFormatter {
   }
 }
 
-function validatePath(obj, path) {
+function validatePath(obj: Tweet, path: string) {
   if (!_.has(obj, path)) {
     throw new Error(`Unable to resolve [${path}] in ${JSON.stringify(obj)}`);
   }
 }
-
-module.exports = TweetFormatter;
