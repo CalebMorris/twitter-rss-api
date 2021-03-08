@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { FullUser } from 'twitter-d';
+import { Entities, FullUser, HashtagEntity, UrlEntity, UserMentionEntity } from 'twitter-d';
 import { ExtendedTweet } from '../shared-types/enteded-tweet';
 
 export default class TweetTransformer {
@@ -10,7 +10,7 @@ export default class TweetTransformer {
       UserIcon: fullUser.profile_image_url_https,
       DisplayName: fullUser.name,
       ReplyingUserName: tweet.in_reply_to_screen_name,
-      FullText: tweet.full_text,
+      FullText: this.enrichText(tweet.full_text, tweet.entities),
       StatusId: tweet.id_str,
       StatusTimestamp: tweet.created_at,
       RetweetUser: tweet.retweetUser,
@@ -46,5 +46,24 @@ export default class TweetTransformer {
       parsedTweet.InReplyToTweet = TweetTransformer.parse(tweet.in_reply_to_tweet);
     }
     return parsedTweet;
+  }
+
+  static enrichText(text: string, entities: Entities): string {
+    if (entities?.user_mentions?.length) {
+      _.each(entities.user_mentions, (userMention: UserMentionEntity) => {
+        text = text.replace(`@${userMention.screen_name}`, `<a href="https://twitter.com/${userMention.screen_name}">@${userMention.screen_name}</a>`);
+      });
+    }
+    if (entities?.hashtags?.length) {
+      _.each(entities.hashtags, (hashtag: HashtagEntity) => {
+        text = text.replace(`#${hashtag.text}`, `<a href="https://twitter.com/hashtag/${hashtag.text}">${hashtag.text}</a>`);
+      });
+    }
+    if (entities?.urls?.length) {
+      _.each(entities.urls, (urlEntity: UrlEntity) => {
+        text = text.replace(urlEntity.url, `<a href="${urlEntity.expanded_url}">${urlEntity.display_url}</a>`);
+      });
+    }
+    return text;
   }
 }

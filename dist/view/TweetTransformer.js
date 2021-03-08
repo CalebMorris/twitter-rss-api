@@ -12,7 +12,7 @@ class TweetTransformer {
             UserIcon: fullUser.profile_image_url_https,
             DisplayName: fullUser.name,
             ReplyingUserName: tweet.in_reply_to_screen_name,
-            FullText: tweet.full_text,
+            FullText: this.enrichText(tweet.full_text, tweet.entities),
             StatusId: tweet.id_str,
             StatusTimestamp: tweet.created_at,
             RetweetUser: tweet.retweetUser,
@@ -46,6 +46,28 @@ class TweetTransformer {
             parsedTweet.InReplyToTweet = TweetTransformer.parse(tweet.in_reply_to_tweet);
         }
         return parsedTweet;
+    }
+    static enrichText(text, entities) {
+        var _a, _b, _c;
+        if ((_a = entities === null || entities === void 0 ? void 0 : entities.user_mentions) === null || _a === void 0 ? void 0 : _a.length) {
+            lodash_1.default.each(entities.user_mentions, (userMention) => {
+                console.log('pre--', text);
+                text = text.replace(`@${userMention.screen_name}`, `<a href="https://twitter.com/${userMention.screen_name}">@${userMention.screen_name}</a>`);
+                console.log('post--', text);
+            });
+        }
+        if ((_b = entities === null || entities === void 0 ? void 0 : entities.hashtags) === null || _b === void 0 ? void 0 : _b.length) {
+            lodash_1.default.each(entities.hashtags, (hashtag) => {
+                text = text.replace(`#${hashtag.text}`, `<a href="https://twitter.com/hashtag/${hashtag.text}">${hashtag.text}</a>`);
+            });
+        }
+        if ((_c = entities === null || entities === void 0 ? void 0 : entities.urls) === null || _c === void 0 ? void 0 : _c.length) {
+            lodash_1.default.each(entities.urls, (urlEntity) => {
+                text = text.replace(urlEntity.url, `<a href="${urlEntity.expanded_url}">${urlEntity.display_url}</a>`);
+            });
+        }
+        // User Ref - [https://twitter.com/:test]
+        return text;
     }
 }
 exports.default = TweetTransformer;
