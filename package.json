@@ -1,6 +1,6 @@
 {
   "name": "twitterRss",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "description": "Rss generator for components of twitter streams.",
   "main": "./dist/twitter-rss-api.js",
   "engines": {
