@@ -1,10 +1,10 @@
 import _ from 'lodash';
-import Joi from '@hapi/joi';
-import Hapi from '@hapi/hapi';
+import Joi from 'joi';
 import Rss from 'rss';
 import util from 'util';
 import TweetFormatter from '../view/TweetFormatter';
 import TweetHandler from '../handlers/tweet-handler';
+import Hapi, { RouteOptionsValidate } from '@hapi/hapi';
 import { Twitter } from "twitter-app-api";
 import { FullUser, Status as Tweet } from 'twitter-d';
 import { ExtendedTweet } from '../view/TweetTransformer';
@@ -45,7 +45,7 @@ function generateRssFeed(screenName: string, tweets: Array<Tweet>): string {
   return feed.xml();
 }
 
-async function handler(twit: Twitter, request: Hapi.Request, h: Hapi.ResponseToolkit) {
+export async function handler(twit: Twitter, request: Hapi.Request, h: Hapi.ResponseToolkit) {
   try {
     console.log(`Requested URL [${request.raw.req.url}]`);
 
@@ -98,25 +98,23 @@ async function handler(twit: Twitter, request: Hapi.Request, h: Hapi.ResponseToo
   }
 }
 
-export default {
-  handler : handler,
+const paramsSchema = Joi.object({
+  screenName : Joi.string().min(1).required()
+});
 
-  generateRssFeed : generateRssFeed,
+const querySchema = Joi.object({
+  user_id             : Joi.number().integer().min(0),
+  since_id            : Joi.number().integer().min(0),
+  count               : Joi.number().integer().min(0),
+  max_id              : Joi.number().integer().min(0),
+  trim_user           : Joi.boolean(),
+  exclude_replies     : Joi.boolean(),
+  contributor_details : Joi.boolean(),
+  include_rts         : Joi.boolean(),
+  format : Joi.string().optional().min(1),
+});
 
-  validate : Joi.object({
-    params : Joi.object({
-      screenName : Joi.string().min(1).required()
-    }),
-    query : Joi.object({
-      user_id             : Joi.number().integer().min(0),
-      since_id            : Joi.number().integer().min(0),
-      count               : Joi.number().integer().min(0),
-      max_id              : Joi.number().integer().min(0),
-      trim_user           : Joi.boolean(),
-      exclude_replies     : Joi.boolean(),
-      contributor_details : Joi.boolean(),
-      include_rts         : Joi.boolean(),
-      format : Joi.string().optional().min(1),
-    }),
-  }),
+export const validationSchema: RouteOptionsValidate = {
+  params : paramsSchema,
+  query : querySchema,
 };

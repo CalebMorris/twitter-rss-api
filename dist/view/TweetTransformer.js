@@ -3,13 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var lodash_1 = __importDefault(require("lodash"));
-var TweetTransformer = /** @class */ (function () {
-    function TweetTransformer() {
-    }
-    TweetTransformer.parse = function (tweet) {
-        var fullUser = tweet.user;
-        var parsedTweet = {
+const lodash_1 = __importDefault(require("lodash"));
+class TweetTransformer {
+    static parse(tweet) {
+        const fullUser = tweet.user;
+        const parsedTweet = {
             UserName: fullUser.screen_name,
             UserIcon: fullUser.profile_image_url_https,
             DisplayName: fullUser.name,
@@ -18,13 +16,13 @@ var TweetTransformer = /** @class */ (function () {
             StatusId: tweet.id_str,
             StatusTimestamp: tweet.created_at,
             RetweetUser: tweet.retweetUser,
-            MediaItems: lodash_1.default.map(tweet && tweet.extended_entities && tweet.extended_entities.media, function (mediaItem) {
+            MediaItems: lodash_1.default.map(tweet && tweet.extended_entities && tweet.extended_entities.media, (mediaItem) => {
                 return {
                     MediaPhoto: mediaItem.type == 'photo' && {
                         url: mediaItem.media_url_https,
                     },
                     MediaVideo: mediaItem.type == 'video' && {
-                        sources: lodash_1.default.map(mediaItem.video_info && mediaItem.video_info.variants, function (variant) {
+                        sources: lodash_1.default.map(mediaItem.video_info && mediaItem.video_info.variants, (variant) => {
                             return {
                                 url: variant.url,
                                 contentType: variant.content_type,
@@ -33,7 +31,7 @@ var TweetTransformer = /** @class */ (function () {
                         }),
                     },
                     MediaAnimatedGif: mediaItem.type == 'animated_gif' && {
-                        sources: lodash_1.default.map(mediaItem.video_info && mediaItem.video_info.variants, function (variant) {
+                        sources: lodash_1.default.map(mediaItem.video_info && mediaItem.video_info.variants, (variant) => {
                             return {
                                 url: variant.url,
                                 contentType: variant.content_type,
@@ -48,7 +46,6 @@ var TweetTransformer = /** @class */ (function () {
             parsedTweet.InReplyToTweet = TweetTransformer.parse(tweet.in_reply_to_tweet);
         }
         return parsedTweet;
-    };
-    return TweetTransformer;
-}());
+    }
+}
 exports.default = TweetTransformer;
