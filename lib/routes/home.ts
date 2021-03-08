@@ -1,14 +1,28 @@
 import Hapi from '@hapi/hapi';
 
-export function route(server: Hapi.Server): void {
+import { FilterMode, queryKey as filterModeKey } from '../handlers/tweets-filter';
 
-  const html = '<html><body><h3>Twitter RSS Shim</h3><p> Test it out: <a href="/user/google?format=rss">here</a></p></body><html>';
+const template = `
+<html>
+<body>
+  <h3>Twitter RSS Shim</h3>
+  <p> Test it out: <a href="/user/google?format=rss">here</a></p>
+  <p></p>
+  <div>
+    <h4>Query param options</h4>
+    <div><b>${filterModeKey}</b> - Filter tweets by a particular type. Modes: [${Object.values(FilterMode).map(x => `<b>${x}</b>`).join(', ')}]</div>
+  </div>
+</body>
+<html>
+`;
+
+export function route(server: Hapi.Server): void {
 
   return server.route({
     path : '/',
     method : 'GET',
     handler : function(request, h) {
-      return h.response(html).code(200);
+      return h.response(template).code(200);
     },
   });
 

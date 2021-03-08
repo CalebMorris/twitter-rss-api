@@ -2,7 +2,7 @@ import { validationSchema, handler as userHandler } from '../handlers/users';
 import { Twitter } from 'twitter-app-api';
 import { Lifecycle, Server, ServerRoute } from '@hapi/hapi';
 
-export function route(twit: Twitter, server: Server) {
+export function route(twit: Twitter, server: Server): void {
 
   const handler: Lifecycle.Method = (r, h, e) => {
     return userHandler(twit, r, h);
