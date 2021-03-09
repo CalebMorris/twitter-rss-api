@@ -10,7 +10,7 @@ A Hapi.js based shim for converting Twitter Application API calls to RSS feeds.
 
 ## Usage
 
-`node index.js`
+`node ./dist/twitter-rss-api.js`
 
 ## Development
 
