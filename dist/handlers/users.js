@@ -1,4 +1,23 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -19,6 +38,7 @@ const rss_1 = __importDefault(require("rss"));
 const util_1 = __importDefault(require("util"));
 const TweetFormatter_1 = __importDefault(require("../view/TweetFormatter"));
 const tweet_handler_1 = __importDefault(require("../handlers/tweet-handler"));
+const tweets_filter_1 = __importStar(require("./tweets-filter"));
 const STATUS_TMPL = 'https://twitter.com/%s/status/%s';
 function generateRssFeed(screenName, tweets) {
     const feed = new rss_1.default({
@@ -61,7 +81,7 @@ function handler(twit, request, h) {
             for (const key in request.query) {
                 options[key] = request.query[key];
             }
-            let timelineTweets = yield twit.statuses.timeline(Object.assign({ screen_name: request.params.screenName }, options));
+            let timelineTweets = (yield twit.statuses.timeline(Object.assign({ screen_name: request.params.screenName }, options))).map(x => x);
             const innerTweetIds = lodash_1.default.reduce(timelineTweets, (curry, timelineTweet) => {
                 if (timelineTweet.in_reply_to_status_id_str)
                     curry.push(timelineTweet.in_reply_to_status_id_str);
@@ -83,6 +103,7 @@ function handler(twit, request, h) {
                 }
                 return tweet;
             });
+            timelineTweets = tweets_filter_1.default.filterByPossibleMode(options[tweets_filter_1.queryKey], timelineTweets);
             return h.response(generateRssFeed(request.params.screenName, timelineTweets))
                 .type('text/xml');
         }
@@ -108,6 +129,7 @@ const querySchema = joi_1.default.object({
     contributor_details: joi_1.default.boolean(),
     include_rts: joi_1.default.boolean(),
     format: joi_1.default.string().optional().min(1),
+    [tweets_filter_1.queryKey]: joi_1.default.string().valid(...Object.values(tweets_filter_1.FilterMode))
 });
 exports.validationSchema = {
     params: paramsSchema,

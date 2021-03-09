@@ -7,7 +7,8 @@ import TweetHandler from '../handlers/tweet-handler';
 import Hapi, { RouteOptionsValidate } from '@hapi/hapi';
 import { Twitter } from "twitter-app-api";
 import { FullUser, Status as Tweet } from 'twitter-d';
-import { ExtendedTweet } from '../view/TweetTransformer';
+import { ExtendedTweet } from '../shared-types/enteded-tweet';
+import TweetsFilter, { FilterMode, queryKey as filterModeKey } from './tweets-filter';
 
 const STATUS_TMPL = 'https://twitter.com/%s/status/%s';
 
@@ -58,10 +59,10 @@ export async function handler(twit: Twitter, request: Hapi.Request, h: Hapi.Resp
       options[key] = request.query[key];
     }
 
-    let timelineTweets = await twit.statuses.timeline({
+    let timelineTweets: ExtendedTweet[] = (await twit.statuses.timeline({
       screen_name : request.params.screenName,
       ...options,
-    });
+    })).map(x => x as ExtendedTweet);
 
     const innerTweetIds = _.reduce(timelineTweets, (curry: string[], timelineTweet: Tweet) => {
       if (timelineTweet.in_reply_to_status_id_str) curry.push(timelineTweet.in_reply_to_status_id_str);
@@ -85,6 +86,8 @@ export async function handler(twit: Twitter, request: Hapi.Request, h: Hapi.Resp
       }
       return tweet;
     });
+
+    timelineTweets = TweetsFilter.filterByPossibleMode(options[filterModeKey], timelineTweets);
 
     return h.response(
       generateRssFeed(request.params.screenName, timelineTweets)
@@ -112,6 +115,7 @@ const querySchema = Joi.object({
   contributor_details : Joi.boolean(),
   include_rts         : Joi.boolean(),
   format : Joi.string().optional().min(1),
+  [filterModeKey]: Joi.string().valid(...Object.values(FilterMode))
 });
 
 export const validationSchema: RouteOptionsValidate = {

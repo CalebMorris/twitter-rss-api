@@ -1,5 +1,3 @@
-'use strict';
-
 import Hapi from '@hapi/hapi';
 import { Twitter } from 'twitter-app-api';
 import { routes } from './routes';

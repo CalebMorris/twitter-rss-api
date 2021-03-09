@@ -1,10 +1,6 @@
 import _ from 'lodash';
-import { FullUser, Status as Tweet, User } from 'twitter-d';
-
-export interface ExtendedTweet extends Tweet {
-  retweetUser: User,
-  in_reply_to_tweet: ExtendedTweet,
-}
+import { FullUser } from 'twitter-d';
+import { ExtendedTweet } from '../shared-types/enteded-tweet';
 
 export default class TweetTransformer {
   static parse(tweet: ExtendedTweet) {
