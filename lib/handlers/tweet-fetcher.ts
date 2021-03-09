@@ -4,7 +4,7 @@ import { Twitter } from 'twitter-app-api';
 import { TimelineOptions, TimelineResults } from 'twitter-app-api/dist/actions/statuses/timeline';
 import { Status as Tweet } from 'twitter-d';
 
-export default class TweetHandler {
+export default class TweetFetcher {
   static tweetRefCache: { [key: string]: Tweet } = {};
 
   twit: Twitter;
@@ -15,7 +15,7 @@ export default class TweetHandler {
 
   async getTweets(tweetIds: string[], options: any = {}): Promise<Array<Tweet>> {
     const [cachedIds, uncachedIds] = _.partition(tweetIds, (tweetId) => {
-      return tweetId in TweetHandler.tweetRefCache;
+      return tweetId in TweetFetcher.tweetRefCache;
     });
 
     const tweets = uncachedIds.length == 0 ? [] : await this.twit.statuses.lookup({
@@ -24,13 +24,13 @@ export default class TweetHandler {
     })
 
     _.forEach(tweets, (tweet) => {
-      TweetHandler.tweetRefCache[tweet.id_str] = tweet;
+      TweetFetcher.tweetRefCache[tweet.id_str] = tweet;
     });
 
     return [
       ...tweets,
       ...(_.map(cachedIds, (cachedId) => {
-        return TweetHandler.tweetRefCache[cachedId];
+        return TweetFetcher.tweetRefCache[cachedId];
       })),
     ];
   }
@@ -38,7 +38,7 @@ export default class TweetHandler {
   async getTimeline(options: TimelineOptions): Promise<TimelineResults> {
     const tweets = await this.twit.statuses.timeline(options);
     _.forEach(tweets, (tweet) => {
-      TweetHandler.tweetRefCache[tweet.id_str] = tweet;
+      TweetFetcher.tweetRefCache[tweet.id_str] = tweet;
     });
     return tweets;
   }

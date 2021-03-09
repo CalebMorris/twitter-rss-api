@@ -76,13 +76,13 @@ function handler(twit, request, h) {
         try {
             console.log(`Requested URL [${request.raw.req.url}]`);
             const options = { screen_name: request.params.screenName };
-            delete request.query.format;
             for (const key in request.query) {
                 options[key] = request.query[key];
             }
             let timelineTweets = yield base_tweet_handler_1.baseHandler(twit, {
                 getTweets: () => __awaiter(this, void 0, void 0, function* () {
-                    return (yield twit.statuses.timeline(Object.assign({ screen_name: request.params.screenName }, options))).map(x => x);
+                    var _a, _b;
+                    return (_b = (_a = (yield twit.search.tweets(Object.assign({ q: `#${request.params.hashtag}` }, options)))) === null || _a === void 0 ? void 0 : _a.statuses) === null || _b === void 0 ? void 0 : _b.map(x => x);
                 })
             });
             timelineTweets = tweets_filter_1.default.filterByPossibleMode(options[tweets_filter_1.queryKey], timelineTweets);
@@ -98,22 +98,11 @@ function handler(twit, request, h) {
     });
 }
 exports.handler = handler;
-const paramsSchema = joi_1.default.object({
-    screenName: joi_1.default.string().min(1).required()
-});
-const querySchema = joi_1.default.object({
-    user_id: joi_1.default.number().integer().min(0),
-    since_id: joi_1.default.number().integer().min(0),
-    count: joi_1.default.number().integer().min(0),
-    max_id: joi_1.default.number().integer().min(0),
-    trim_user: joi_1.default.boolean(),
-    exclude_replies: joi_1.default.boolean(),
-    contributor_details: joi_1.default.boolean(),
-    include_rts: joi_1.default.boolean(),
-    format: joi_1.default.string().optional().min(1),
-    [tweets_filter_1.queryKey]: joi_1.default.string().valid(...Object.values(tweets_filter_1.FilterMode))
-});
 exports.validationSchema = {
-    params: paramsSchema,
-    query: querySchema,
+    params: joi_1.default.object({
+        hashTag: joi_1.default.string().min(1).required()
+    }),
+    query: joi_1.default.object({
+        [tweets_filter_1.queryKey]: joi_1.default.string().valid(...Object.values(tweets_filter_1.FilterMode))
+    }),
 };

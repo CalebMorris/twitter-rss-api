@@ -6,7 +6,8 @@ const template = `
 <html>
 <body>
   <h3>Twitter RSS Shim</h3>
-  <p> Test it out: <a href="/user/google?format=rss">here</a></p>
+  <p> Feed for a user: <a href="/user/google">@google</a></p>
+  <p> Feed for a hashtag: <a href="/hashtag/test">#test</a></p>
   <p></p>
   <div>
     <h4>Query param options</h4>

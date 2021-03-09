@@ -13,23 +13,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_1 = __importDefault(require("lodash"));
-class TweetHandler {
+class TweetFetcher {
     constructor(twit) {
         this.twit = twit;
     }
     getTweets(tweetIds, options = {}) {
         return __awaiter(this, void 0, void 0, function* () {
             const [cachedIds, uncachedIds] = lodash_1.default.partition(tweetIds, (tweetId) => {
-                return tweetId in TweetHandler.tweetRefCache;
+                return tweetId in TweetFetcher.tweetRefCache;
             });
             const tweets = uncachedIds.length == 0 ? [] : yield this.twit.statuses.lookup(Object.assign({ id: uncachedIds.join(",") }, options));
             lodash_1.default.forEach(tweets, (tweet) => {
-                TweetHandler.tweetRefCache[tweet.id_str] = tweet;
+                TweetFetcher.tweetRefCache[tweet.id_str] = tweet;
             });
             return [
                 ...tweets,
                 ...(lodash_1.default.map(cachedIds, (cachedId) => {
-                    return TweetHandler.tweetRefCache[cachedId];
+                    return TweetFetcher.tweetRefCache[cachedId];
                 })),
             ];
         });
@@ -38,11 +38,11 @@ class TweetHandler {
         return __awaiter(this, void 0, void 0, function* () {
             const tweets = yield this.twit.statuses.timeline(options);
             lodash_1.default.forEach(tweets, (tweet) => {
-                TweetHandler.tweetRefCache[tweet.id_str] = tweet;
+                TweetFetcher.tweetRefCache[tweet.id_str] = tweet;
             });
             return tweets;
         });
     }
 }
-exports.default = TweetHandler;
-TweetHandler.tweetRefCache = {};
+exports.default = TweetFetcher;
+TweetFetcher.tweetRefCache = {};
