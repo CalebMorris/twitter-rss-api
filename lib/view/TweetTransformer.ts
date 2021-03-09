@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { Entities, FullUser, HashtagEntity, UrlEntity, UserMentionEntity } from 'twitter-d';
 import { ExtendedTweet } from '../shared-types/enteded-tweet';
+import { htmlEncode } from 'htmlencode';
 
 export default class TweetTransformer {
   static parse(tweet: ExtendedTweet) {
@@ -49,6 +50,14 @@ export default class TweetTransformer {
   }
 
   static enrichText(text: string, entities: Entities): string {
+
+    /*
+     * In order for us to enrich the text content we first need to encode the text to prevent any HTML content
+     *  already in the tweet from being embedded accidentally.
+     * This means that the rendering engine needs to not HTML encode the text as well.
+     */
+    text = htmlEncode(text);
+
     if (entities?.user_mentions?.length) {
       _.each(entities.user_mentions, (userMention: UserMentionEntity) => {
         text = text.replace(`@${userMention.screen_name}`, `<a href="https://twitter.com/${userMention.screen_name}">@${userMention.screen_name}</a>`);
@@ -56,7 +65,7 @@ export default class TweetTransformer {
     }
     if (entities?.hashtags?.length) {
       _.each(entities.hashtags, (hashtag: HashtagEntity) => {
-        text = text.replace(`#${hashtag.text}`, `<a href="https://twitter.com/hashtag/${hashtag.text}">${hashtag.text}</a>`);
+        text = text.replace(`#${hashtag.text}`, `<a href="https://twitter.com/hashtag/${hashtag.text}">#${hashtag.text}</a>`);
       });
     }
     if (entities?.urls?.length) {
