@@ -50,18 +50,17 @@ export async function handler(twit: Twitter, request: Hapi.Request, h: Hapi.Resp
   try {
     console.log(`Requested URL [${request.raw.req.url}]`);
 
-    const options: any = { screen_name : request.params.screenName };
-
-    for (const key in request.query) {
-      options[key] = request.query[key];
-    }
+    const options: any = {
+      hashTag: request.params.hashTag,
+      ...request.query,
+    };
 
     let timelineTweets = await baseHandler(
       twit,
       {
           getTweets: async () => {
           return (await twit.search.tweets({
-            q : `#${request.params.hashtag}`,
+            q : `#${options.hashTag}`,
             ...options,
           }))?.statuses?.map(x => x as ExtendedTweet);
         }

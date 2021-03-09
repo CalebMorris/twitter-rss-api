@@ -75,14 +75,11 @@ function handler(twit, request, h) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             console.log(`Requested URL [${request.raw.req.url}]`);
-            const options = { screen_name: request.params.screenName };
-            for (const key in request.query) {
-                options[key] = request.query[key];
-            }
+            const options = Object.assign({ hashTag: request.params.hashTag }, request.query);
             let timelineTweets = yield base_tweet_handler_1.baseHandler(twit, {
                 getTweets: () => __awaiter(this, void 0, void 0, function* () {
                     var _a, _b;
-                    return (_b = (_a = (yield twit.search.tweets(Object.assign({ q: `#${request.params.hashtag}` }, options)))) === null || _a === void 0 ? void 0 : _a.statuses) === null || _b === void 0 ? void 0 : _b.map(x => x);
+                    return (_b = (_a = (yield twit.search.tweets(Object.assign({ q: `#${options.hashTag}` }, options)))) === null || _a === void 0 ? void 0 : _a.statuses) === null || _b === void 0 ? void 0 : _b.map(x => x);
                 })
             });
             timelineTweets = tweets_filter_1.default.filterByPossibleMode(options[tweets_filter_1.queryKey], timelineTweets);
