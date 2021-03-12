@@ -50,22 +50,19 @@ export async function handler(twit: Twitter, request: Hapi.Request, h: Hapi.Resp
   try {
     console.log(`Requested URL [${request.raw.req.url}]`);
 
-    const options: any = { screen_name : request.params.screenName };
-
-    delete request.query.format;
-
-    for (const key in request.query) {
-      options[key] = request.query[key];
-    }
+    const options: any = {
+      hashTag: request.params.hashTag,
+      ...request.query,
+    };
 
     let timelineTweets = await baseHandler(
       twit,
       {
           getTweets: async () => {
-          return (await twit.statuses.timeline({
-            screen_name : request.params.screenName,
+          return (await twit.search.tweets({
+            q : `#${options.hashTag}`,
             ...options,
-          })).map(x => x as ExtendedTweet);
+          }))?.statuses?.map(x => x as ExtendedTweet);
         }
       }
     )
@@ -84,24 +81,11 @@ export async function handler(twit: Twitter, request: Hapi.Request, h: Hapi.Resp
   }
 }
 
-const paramsSchema = Joi.object({
-  screenName : Joi.string().min(1).required()
-});
-
-const querySchema = Joi.object({
-  user_id             : Joi.number().integer().min(0),
-  since_id            : Joi.number().integer().min(0),
-  count               : Joi.number().integer().min(0),
-  max_id              : Joi.number().integer().min(0),
-  trim_user           : Joi.boolean(),
-  exclude_replies     : Joi.boolean(),
-  contributor_details : Joi.boolean(),
-  include_rts         : Joi.boolean(),
-  format : Joi.string().optional().min(1),
-  [filterModeKey]: Joi.string().valid(...Object.values(FilterMode))
-});
-
 export const validationSchema: RouteOptionsValidate = {
-  params : paramsSchema,
-  query : querySchema,
+  params : Joi.object({
+    hashTag : Joi.string().min(1).required()
+  }),
+  query : Joi.object({
+    [filterModeKey]: Joi.string().valid(...Object.values(FilterMode))
+  }),
 };
