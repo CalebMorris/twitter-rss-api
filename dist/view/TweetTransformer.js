@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_1 = __importDefault(require("lodash"));
-const htmlencode_1 = require("htmlencode");
+const html_entities_1 = require("html-entities");
 class TweetTransformer {
     static parse(tweet) {
         const fullUser = tweet.user;
@@ -55,7 +55,7 @@ class TweetTransformer {
          *  already in the tweet from being embedded accidentally.
          * This means that the rendering engine needs to not HTML encode the text as well.
          */
-        text = htmlencode_1.htmlEncode(text);
+        text = html_entities_1.encode(text);
         if ((_a = entities === null || entities === void 0 ? void 0 : entities.user_mentions) === null || _a === void 0 ? void 0 : _a.length) {
             lodash_1.default.each(entities.user_mentions, (userMention) => {
                 text = text.replace(`@${userMention.screen_name}`, `<a href="https://twitter.com/${userMention.screen_name}">@${userMention.screen_name}</a>`);
@@ -68,8 +68,6 @@ class TweetTransformer {
         }
         if ((_c = entities === null || entities === void 0 ? void 0 : entities.urls) === null || _c === void 0 ? void 0 : _c.length) {
             lodash_1.default.each(entities.urls, (urlEntity) => {
-                console.log(`urlEntity ${JSON.stringify(urlEntity)}`);
-                console.log(`attempting to embed ${urlEntity.url}`);
                 text = text.replace(urlEntity.url, `<a href="${urlEntity.expanded_url}">${urlEntity.display_url}</a>`);
             });
         }

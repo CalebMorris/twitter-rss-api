@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { Entities, FullUser, HashtagEntity, UrlEntity, UserMentionEntity } from 'twitter-d';
 import { ExtendedTweet } from '../shared-types/enteded-tweet';
-import { htmlEncode } from 'htmlencode';
+import { encode } from 'html-entities';
 
 export default class TweetTransformer {
   static parse(tweet: ExtendedTweet) {
@@ -56,7 +56,7 @@ export default class TweetTransformer {
      *  already in the tweet from being embedded accidentally.
      * This means that the rendering engine needs to not HTML encode the text as well.
      */
-    text = htmlEncode(text);
+    text = encode(text);
 
     if (entities?.user_mentions?.length) {
       _.each(entities.user_mentions, (userMention: UserMentionEntity) => {
