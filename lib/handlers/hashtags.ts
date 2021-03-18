@@ -12,13 +12,13 @@ import { baseHandler } from './base-tweet-handler';
 
 const STATUS_TMPL = 'https://twitter.com/%s/status/%s';
 
-function generateRssFeed(screenName: string, tweets: Array<Tweet>): string {
+function generateRssFeed(hashTag: string, tweets: Array<Tweet>, feedUrl: string): string {
   const feed = new Rss({
-    title : `Tweets of ${screenName}`,
-    description : `Rss of tweets for the user '${screenName}'`,
+    title : `Tweets of #${hashTag}`,
+    description : `Rss of tweets for the hashtag '#${hashTag}'`,
     generator : 'node-rss and twitter-rss-api',
-    site_url: `https://twitter.com/${screenName}`,
-    feed_url: '', // TODO: fill this in
+    site_url: `https://twitter.com/hashtag/${hashTag}`,
+    feed_url: feedUrl,
   });
 
   _.map(tweets, function(tweet) {
@@ -27,7 +27,6 @@ function generateRssFeed(screenName: string, tweets: Array<Tweet>): string {
       description : TweetFormatter.render(tweet),
       url : util.format(STATUS_TMPL, (tweet.user as FullUser).screen_name, tweet.id_str),
       date : tweet.created_at,
-      author : screenName
     };
     if (tweet.entities) {
       if (tweet.entities.media) {
@@ -70,7 +69,7 @@ export async function handler(twit: Twitter, request: Hapi.Request, h: Hapi.Resp
     timelineTweets = TweetsFilter.filterByPossibleMode(options[filterModeKey], timelineTweets);
 
     return h.response(
-      generateRssFeed(request.params.screenName, timelineTweets)
+      generateRssFeed(request.params.hashTag, timelineTweets, request.url.toString())
     )
     .type('text/xml');
   } catch(err) {

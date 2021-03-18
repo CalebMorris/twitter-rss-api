@@ -40,13 +40,13 @@ const TweetFormatter_1 = __importDefault(require("../view/TweetFormatter"));
 const tweets_filter_1 = __importStar(require("./tweets-filter"));
 const base_tweet_handler_1 = require("./base-tweet-handler");
 const STATUS_TMPL = 'https://twitter.com/%s/status/%s';
-function generateRssFeed(screenName, tweets) {
+function generateRssFeed(hashTag, tweets, feedUrl) {
     const feed = new rss_1.default({
-        title: `Tweets of ${screenName}`,
-        description: `Rss of tweets for the user '${screenName}'`,
+        title: `Tweets of #${hashTag}`,
+        description: `Rss of tweets for the hashtag '#${hashTag}'`,
         generator: 'node-rss and twitter-rss-api',
-        site_url: `https://twitter.com/${screenName}`,
-        feed_url: '', // TODO: fill this in
+        site_url: `https://twitter.com/hashtag/${hashTag}`,
+        feed_url: feedUrl,
     });
     lodash_1.default.map(tweets, function (tweet) {
         const itemOptions = {
@@ -54,7 +54,6 @@ function generateRssFeed(screenName, tweets) {
             description: TweetFormatter_1.default.render(tweet),
             url: util_1.default.format(STATUS_TMPL, tweet.user.screen_name, tweet.id_str),
             date: tweet.created_at,
-            author: screenName
         };
         if (tweet.entities) {
             if (tweet.entities.media) {
@@ -83,7 +82,7 @@ function handler(twit, request, h) {
                 })
             });
             timelineTweets = tweets_filter_1.default.filterByPossibleMode(options[tweets_filter_1.queryKey], timelineTweets);
-            return h.response(generateRssFeed(request.params.screenName, timelineTweets))
+            return h.response(generateRssFeed(request.params.hashTag, timelineTweets, request.url.toString()))
                 .type('text/xml');
         }
         catch (err) {
