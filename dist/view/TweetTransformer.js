@@ -18,12 +18,13 @@ class TweetTransformer {
             StatusTimestamp: tweet.created_at,
             RetweetUser: tweet.retweetUser,
             MediaItems: lodash_1.default.map(tweet && tweet.extended_entities && tweet.extended_entities.media, (mediaItem) => {
+                var _a, _b, _c, _d;
                 return {
                     MediaPhoto: mediaItem.type == 'photo' && {
                         url: mediaItem.media_url_https,
                     },
                     MediaVideo: mediaItem.type == 'video' && {
-                        sources: lodash_1.default.map(mediaItem.video_info && mediaItem.video_info.variants, (variant) => {
+                        sources: lodash_1.default.map((_b = (_a = mediaItem === null || mediaItem === void 0 ? void 0 : mediaItem.video_info) === null || _a === void 0 ? void 0 : _a.variants) === null || _b === void 0 ? void 0 : _b.sort(TweetTransformer.sortVideoCompare), (variant) => {
                             return {
                                 url: variant.url,
                                 contentType: variant.content_type,
@@ -32,7 +33,7 @@ class TweetTransformer {
                         }),
                     },
                     MediaAnimatedGif: mediaItem.type == 'animated_gif' && {
-                        sources: lodash_1.default.map(mediaItem.video_info && mediaItem.video_info.variants, (variant) => {
+                        sources: lodash_1.default.map((_d = (_c = mediaItem === null || mediaItem === void 0 ? void 0 : mediaItem.video_info) === null || _c === void 0 ? void 0 : _c.variants) === null || _d === void 0 ? void 0 : _d.sort(TweetTransformer.sortVideoCompare), (variant) => {
                             return {
                                 url: variant.url,
                                 contentType: variant.content_type,
@@ -47,6 +48,10 @@ class TweetTransformer {
             parsedTweet.InReplyToTweet = TweetTransformer.parse(tweet.in_reply_to_tweet);
         }
         return parsedTweet;
+    }
+    static sortVideoCompare(left, right) {
+        var _a, _b;
+        return ((_a = left === null || left === void 0 ? void 0 : left.bitrate) !== null && _a !== void 0 ? _a : -Infinity) > ((_b = right === null || right === void 0 ? void 0 : right.bitrate) !== null && _b !== void 0 ? _b : -Infinity) ? 1 : -1;
     }
     static enrichText(text, entities) {
         var _a, _b, _c;

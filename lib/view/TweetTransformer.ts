@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { Entities, FullUser, HashtagEntity, UrlEntity, UserMentionEntity } from 'twitter-d';
 import { ExtendedTweet } from '../shared-types/enteded-tweet';
 import { encode } from 'html-entities';
+import { VideoVariant } from 'twitter-d/types/video_variant';
 
 export default class TweetTransformer {
   static parse(tweet: ExtendedTweet) {
@@ -23,7 +24,7 @@ export default class TweetTransformer {
               url: mediaItem.media_url_https,
             },
             MediaVideo: mediaItem.type == 'video' && {
-              sources: _.map(mediaItem.video_info && mediaItem.video_info.variants, (variant) => {
+              sources: _.map(mediaItem?.video_info?.variants?.sort(TweetTransformer.sortVideoCompare), (variant) => {
                 return {
                   url: variant.url,
                   contentType: variant.content_type,
@@ -32,7 +33,7 @@ export default class TweetTransformer {
               }),
             },
             MediaAnimatedGif: mediaItem.type == 'animated_gif' && {
-              sources: _.map(mediaItem.video_info && mediaItem.video_info.variants, (variant) => {
+              sources: _.map(mediaItem?.video_info?.variants?.sort(TweetTransformer.sortVideoCompare), (variant) => {
                 return {
                   url: variant.url,
                   contentType: variant.content_type,
@@ -47,6 +48,10 @@ export default class TweetTransformer {
       parsedTweet.InReplyToTweet = TweetTransformer.parse(tweet.in_reply_to_tweet);
     }
     return parsedTweet;
+  }
+
+  static sortVideoCompare(left: VideoVariant, right: VideoVariant): number {
+    return (left?.bitrate ?? -Infinity) > (right?.bitrate ?? -Infinity) ? 1 : -1
   }
 
   static enrichText(text: string, entities: Entities): string {
